@@ -1,40 +1,112 @@
-Below are the steps to get your plugin running. You can also find instructions at:
+# figma-plugin-template
 
-  https://www.figma.com/plugin-docs/plugin-quickstart-guide/
+A figma template using React, Typescript, JSON RPC.
 
-This plugin template uses Typescript and NPM, two standard tools in creating JavaScript applications.
+<img width="1728" alt="image" src="https://github.com/user-attachments/assets/07858825-23be-46e7-b723-b0da8cdf0cc9">
 
-First, download Node.js which comes with NPM. This will allow you to install TypeScript and other
-libraries. You can find the download link here:
+## Install
 
-  https://nodejs.org/en/download/
+```bash
+pnpm install
+```
 
-Next, install TypeScript using the command:
+## Development
 
-  npm install -g typescript
+```bash
+npm run dev
+```
 
-Finally, in the directory of your plugin, get the latest type definitions for the plugin API by running:
+- we use [rspack](https://rspack.dev/) to bundle web project
+- we use [esbuild](https://esbuild.github.io/) to bundle sandbox code
 
-  npm install --save-dev @figma/plugin-typings
+## Build
 
-If you are familiar with JavaScript, TypeScript will look very familiar. In fact, valid JavaScript code
-is already valid Typescript code.
+```bash
+npm run build
+```
 
-TypeScript adds type annotations to variables. This allows code editors such as Visual Studio Code
-to provide information about the Figma API while you are writing code, as well as help catch bugs
-you previously didn't notice.
+Here are the bundles:
 
-For more information, visit https://www.typescriptlang.org/
+```
+├── code.js
+├── manifest.json
+├── ui.html
+└── web
+    ├── index.35ed7150.css
+    ├── index.ef782c3a.js
+    └── index.html
+```
 
-Using TypeScript requires a compiler to convert TypeScript (code.ts) into JavaScript (code.js)
-for the browser to run.
+- Figma plugin: manifest.json, code.js, ui.html
+- Web project: font-page code are in `web` dir, and you need upload these files(html,js,css) into your CDN
 
-We recommend writing TypeScript code using Visual Studio code:
+Don't forget to replace the html url with your CDN address.
 
-1. Download Visual Studio Code if you haven't already: https://code.visualstudio.com/.
-2. Open this directory in Visual Studio Code.
-3. Compile TypeScript to JavaScript: Run the "Terminal > Run Build Task..." menu item,
-    then select "npm: watch". You will have to do this again every time
-    you reopen Visual Studio Code.
+<img width="1728" alt="image" src="https://github.com/user-attachments/assets/99f722e8-451d-4e24-9828-c9abcedf6cbb">
 
-That's it! Visual Studio Code will regenerate the JavaScript file every time you save.
+## One more thing
+
+We use JSON rpc with typings, so that we can know each interface.
+
+- before
+
+```typescript
+// plugin ui postmessage to sandbox code
+parent.postMessage({ pluginMessage: { type: 'create-rectangles', count } }, '*')
+```
+
+```typescript
+// sandbox code listen and do sothing
+figma.ui.onmessage = (msg: { type: string, count: number }) => {
+  // One way of distinguishing between different types of messages sent from
+  // your HTML page is to use an object with a "type" property like this.
+  if (msg.type === 'create-rectangles') {
+    const nodes: SceneNode[] = [];
+    for (let i = 0; i < msg.count; i++) {
+      const rect = figma.createRectangle();
+      rect.x = i * 150;
+      rect.fills = [{ type: 'SOLID', color: { r: 1, g: 0.5, b: 0 } }] as any;
+      figma.currentPage.appendChild(rect);
+      nodes.push(rect);
+    }
+    figma.currentPage.selection = nodes;
+    figma.viewport.scrollAndZoomIntoView(nodes);
+  }
+
+  // Make sure to close the plugin when you're done. Otherwise the plugin will
+  // keep running, which shows the cancel button at the bottom of the screen.
+  figma.closePlugin();
+};
+```
+
+- after
+
+```typescript
+// plugin ui call codeApi by JSON rpc
+codeApi.createRectangles(count);
+```
+
+```typescript
+// sandbox code declare handler
+function createRectangles(count: number) {
+  const nodes: SceneNode[] = [];
+  for (let i = 0; i < count; i++) {
+    const rect = figma.createRectangle();
+    rect.x = i * 150;
+    rect.fills = [{ type: 'SOLID', color: { r: 1, g: 0.5, b: 0 } }] as any;
+    figma.currentPage.appendChild(rect);
+    nodes.push(rect);
+  }
+  figma.currentPage.selection = nodes;
+  figma.viewport.scrollAndZoomIntoView(nodes);
+}
+// other handlers
+
+const handlers = {
+  createRectangles,
+};
+
+export default handlers;
+```
+
+And we don't have to bundle plugin api's handlers to code api or vice versa using [Proxy](./src/rpc/proxy.ts)！
