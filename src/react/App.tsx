@@ -1,34 +1,35 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import manifest from '../../manifest.json';
+import { codeApi } from './rpc';
 
 const pluginId = manifest.id;
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(5);
 
-  useEffect(() => {
-    const handler = () => {
-      document.getElementById('create').onclick = () => {
-        const textbox = document.getElementById('count');
-        const count = parseInt(textbox.value, 10);
-        parent.postMessage({ pluginMessage: { type: 'create-rectangles', count }, pluginId }, '*');
-      };
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target } = event;
+    const num = Number(target.value);
+    if (!isNaN(num)) {
+      setCount(num);
+    } else {
+      setCount(0);
+    }
+  };
 
-      document.getElementById('cancel').onclick = () => {
-        parent.postMessage({ pluginMessage: { type: 'cancel' }, pluginId }, '*');
-      };
-    };
-    handler();
-  }, []);
+  const handleCreate = () => {
+    codeApi.createRectangles(count);
+  };
 
   return (
     <div className="App">
-      <h2>Rectangle Creator????</h2>
+      <h2>Rectangle Creator</h2>
       <p>
-        Count: <input id="count" value="5" />
+        Count: <input id="count" value={count} onChange={handleChange} />
       </p>
-      <button id="create">Create</button>
-      <button id="cancel">Cancel</button>
+      <button id="create" onClick={handleCreate}>
+        Create
+      </button>
     </div>
   );
 }
