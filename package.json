@@ -1,22 +1,47 @@
 {
-  "name": "test-plugin",
+  "name": "figma-plugin-template",
   "version": "1.0.0",
   "description": "Your Figma Plugin",
-  "main": "code.js",
+  "private": true,
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "dev": "run-p dev:web dev:sandbox",
+    "dev:web": "cross-env NODE_ENV=development rspack serve",
+    "dev:sandbox": "esbuild ./src/sandbox/index.ts --bundle --outfile=dist/code.js --watch --target=chrome58",
+    "build": "run-p build:web build:sandbox",
+    "build:web": "cross-env NODE_ENV=production rspack build",
+    "build:sandbox": "esbuild ./src/sandbox/index.ts --bundle --outfile=dist/code.js --target=chrome58",
     "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules .",
-    "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix .",
-    "watch": "npm run build -- --watch"
+    "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix ."
   },
   "author": "",
   "license": "",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
   "devDependencies": {
     "@figma/eslint-plugin-figma-plugins": "*",
     "@figma/plugin-typings": "*",
+    "@rspack/cli": "1.0.0-beta.4",
+    "@rspack/core": "1.0.0-beta.4",
+    "@rspack/plugin-react-refresh": "1.0.0-beta.4",
+    "@types/react": "^18.2.48",
+    "@types/react-dev-utils": "^9.0.15",
+    "@types/react-dom": "^18.2.18",
     "@typescript-eslint/eslint-plugin": "^6.12.0",
     "@typescript-eslint/parser": "^6.12.0",
+    "autoprefixer": "^10.4.20",
+    "cross-env": "^7.0.3",
+    "css-loader": "^7.1.2",
+    "esbuild": "^0.23.1",
     "eslint": "^8.54.0",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.41",
+    "postcss-loader": "^8.1.1",
+    "react-refresh": "^0.14.0",
+    "style-loader": "^4.0.0",
+    "tailwindcss": "^3.4.10",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.2"
   },
   "eslintConfig": {
