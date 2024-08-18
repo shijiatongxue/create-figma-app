@@ -19,5 +19,6 @@ createRpcHandler({
       handler(event.data.pluginMessage);
     };
   },
+  // sandbox 调用 local methods 的方法
   localMethods: {},
 });

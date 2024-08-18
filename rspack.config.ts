@@ -9,15 +9,11 @@ export default defineConfig({
   context: __dirname,
   entry: {
     index: './src/react/index.tsx',
-    code: './src/sandbox/index.ts',
   },
   output: {
     clean: true,
     path: path.resolve(__dirname, 'dist/web'),
-    filename: (pathData) => {
-      return pathData?.chunk?.name === 'index' ? '[name].[contenthash].js' : '../[name].js';
-    },
-    publicPath: '/',
+    filename: '[name].[contenthash].js',
     cssFilename: '[name].[contenthash].css',
     hashDigestLength: 8,
   },
@@ -75,13 +71,13 @@ export default defineConfig({
       },
     ],
   },
-  optimization: {
-    minimize: false,
-  },
   devtool: isDev ? 'eval' : false,
   devServer: {
     open: true,
     port: 3000,
+    devMiddleware: {
+      writeToDisk: true,
+    },
   },
   plugins: [
     new rspack.DefinePlugin({
@@ -90,8 +86,6 @@ export default defineConfig({
     new rspack.ProgressPlugin({}),
     new rspack.HtmlRspackPlugin({
       template: './src/react/index.html',
-      filename: 'index.html',
-      chunks: ['index'],
     }),
     new rspack.CopyRspackPlugin({
       patterns: [
@@ -100,7 +94,7 @@ export default defineConfig({
           to: path.resolve(__dirname, 'dist/manifest.json'),
         },
         {
-          from: './ui.html',
+          from: isDev ? './ui.dev.html' : './ui.prod.html',
           to: path.resolve(__dirname, 'dist/ui.html'),
         },
       ],
