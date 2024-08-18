@@ -110,3 +110,7 @@ export default handlers;
 ```
 
 And we don't have to bundle plugin api's handlers to code api or vice versa using [Proxy](./src/rpc/proxy.ts)！
+
+## Thanks
+
+- JSON rpc work is inspired by [figma-JSONRPC](https://github.com/Lona/figma-jsonrpc/tree/master)
