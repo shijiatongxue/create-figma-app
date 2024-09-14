@@ -1,14 +1,23 @@
-import { JsonData, PendingCallback } from './interface';
 import { config } from './config';
 import * as RPCError from './errors';
+import { JsonData } from './interface';
+
+export type PendingCallback = {
+  (err: unknown, result: unknown): void;
+  timeout: number;
+};
 
 let rpcIndex = 0;
-let pending: Record<string, PendingCallback> = {};
+const pending: Record<string, PendingCallback> = {};
 
-function sendRaw(message: any) {
+function sendRaw(message: unknown) {
   const { target, targetOrigin, transformMessage, postmessage } = config;
   const raw = transformMessage ? transformMessage(message) : message;
-  postmessage ? postmessage(raw) : target?.postMessage(raw, targetOrigin as string);
+  if (typeof postmessage === 'function') {
+    postmessage(raw);
+  } else {
+    target?.postMessage(raw, targetOrigin as string);
+  }
 }
 
 function sendJson(json: JsonData) {
@@ -87,7 +96,9 @@ function handleRequest(json: JsonData) {
   try {
     const result = onRequest(json.method, json.params);
     if (result && typeof result.then === 'function') {
-      result.then((res: a) => sendResult(json.id, res)).catch((err) => sendError(json.id, err));
+      result
+        .then((res: a) => sendResult(json.id, res))
+        .catch((err) => sendError(json.id, err));
     } else {
       sendResult(json.id, result);
     }
@@ -100,10 +111,17 @@ function handleRpc(json: JsonData) {
   const { id, result, error, method } = json;
   if (typeof id !== 'undefined') {
     // json result
-    if (typeof result !== 'undefined' || error || typeof method === 'undefined') {
+    if (
+      typeof result !== 'undefined' ||
+      error ||
+      typeof method === 'undefined'
+    ) {
       const callback = pending[id];
       if (!callback) {
-        sendError(id, new RPCError.InvalidRequest('Missing callback for ' + json.id));
+        sendError(
+          id,
+          new RPCError.InvalidRequest('Missing callback for ' + json.id)
+        );
         return;
       }
       if (callback.timeout) {
@@ -121,11 +139,11 @@ function handleRpc(json: JsonData) {
 }
 
 function onRequest(method, params) {
-  const { methods } = config;
-  if (!methods[method]) {
+  const { rpcMethods } = config;
+  if (!rpcMethods[method]) {
     throw new RPCError.MethodNotFound(method);
   }
-  return methods[method](...params);
+  return rpcMethods[method](...params);
 }
 
 function handleNotification(json: JsonData) {

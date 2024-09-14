@@ -1,19 +1,17 @@
-import { createRpcHandler, createRpcApi } from '../rpc/index';
+import { createRpcApi } from '../rpc/index';
 import handlers, { Handlers } from './handlers';
 
 export type { Handlers };
 
 figma.showUI(__html__);
 
-createRpcHandler({
+createRpcApi({
+  postmessage: (message: unknown) =>
+    figma.ui.postMessage(message, { origin: '*' }),
   onmessage: (handler) => {
     figma.ui.onmessage = (message) => {
       handler(message);
     };
   },
-  localMethods: handlers,
-});
-
-export const uiApi = createRpcApi<{}>({
-  postmessage: (message: any) => figma.ui.postMessage(message, { origin: '*' }),
+  rpcMethods: handlers,
 });

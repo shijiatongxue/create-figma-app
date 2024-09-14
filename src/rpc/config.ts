@@ -1,16 +1,19 @@
 import { JsonRpcOptions } from './interface';
+import { handleRaw } from './rpc';
 
-const config: JsonRpcOptions & {
-  methods: Record<string, (...args: any[]) => any>;
-} = {
+const config: JsonRpcOptions = {
   target: null,
-  methods: {},
   targetOrigin: '*',
-  timeout: 3000,
+  rpcMethods: {},
+  timeout: 60000,
 };
 
 export function initConfig(options: JsonRpcOptions) {
+  const { onmessage } = options;
   Object.assign(config, options);
+  if (typeof onmessage === 'function') {
+    onmessage(handleRaw);
+  }
 }
 
 export { config };

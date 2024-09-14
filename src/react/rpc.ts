@@ -1,24 +1,20 @@
-import { createRpcHandler, createRpcApi } from '../rpc';
 import manifest from '../../manifest.json';
+import { createRpcApi } from '../rpc';
 import { Handlers } from '../sandbox/index';
 
-export const codeApi = createRpcApi<Handlers>({
+export const sandboxApi = createRpcApi<Handlers>({
   target: parent,
-  targetOrigin: '*',
-  transformMessage: (message: any) => {
+  transformMessage: (message: unknown) => {
     return {
       pluginMessage: message,
       pluginId: manifest.id,
     };
   },
-});
-
-createRpcHandler({
   onmessage: (handler) => {
     window.onmessage = (event) => {
       handler(event.data.pluginMessage);
     };
   },
-  // sandbox 调用 local methods 的方法
-  localMethods: {},
 });
+
+export {};

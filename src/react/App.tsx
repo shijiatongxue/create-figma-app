@@ -1,8 +1,5 @@
 import { useState } from 'react';
-import manifest from '../../manifest.json';
-import { codeApi } from './rpc';
-
-const pluginId = manifest.id;
+import { sandboxApi } from './rpc';
 
 function App() {
   const [count, setCount] = useState(5);
@@ -18,7 +15,7 @@ function App() {
   };
 
   const handleCreate = () => {
-    codeApi.createRectangles(count);
+    sandboxApi.createRectangles(count);
   };
 
   return (
