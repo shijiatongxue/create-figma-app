@@ -7,13 +7,12 @@
     "**/.DS_Store": true,
     "**/node_modules": true
   },
-  "javascript.validate.enable": false,
-  "typescript.validate.enable": false,
+  "javascript.validate.enable": true,
+  "typescript.validate.enable": true,
   "prettier.requireConfig": true,
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.organizeImports": "explicit"
-  },
-  "eslint.nodePath": ""
+  }
 }
