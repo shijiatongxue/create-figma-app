@@ -4,22 +4,25 @@
   "description": "Your Figma Plugin",
   "private": true,
   "scripts": {
-    "dev": "run-p dev:web dev:sandbox",
+    "dev": "npm-run-all -p dev:code dev:sandbox dev:web",
     "dev:web": "cross-env NODE_ENV=development rspack serve",
-    "dev:sandbox": "esbuild ./src/sandbox/index.ts --bundle --outfile=dist/code.js --watch --target=chrome58",
-    "build": "run-p build:web build:sandbox",
+    "dev:code": "esbuild ./src/sandbox/code/index.ts --bundle --outfile=dist/code.js --target=chrome58 --watch",
+    "dev:sandbox": "esbuild ./src/sandbox/sandbox/index.ts --bundle --outfile=src/react/rpc/sandbox.js --target=chrome58 --watch",
+    "build": "npm-run-all -p build:code build:sandbox build:web",
     "build:web": "cross-env NODE_ENV=production rspack build",
-    "build:sandbox": "esbuild ./src/sandbox/index.ts --bundle --outfile=dist/code.js --target=chrome58",
+    "build:code": "esbuild ./src/sandbox/code/index.ts --bundle --outfile=dist/code.js --target=chrome58",
+    "build:sandbox": "esbuild ./src/sandbox/sandbox/index.ts --bundle --outfile=src/react/rpc/sandbox.js --target=chrome58",
     "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules .",
     "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix ."
   },
-  "author": "",
-  "license": "",
+  "author": "shijiatongxue",
+  "license": "MIT",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.10.0",
     "@figma/eslint-plugin-figma-plugins": "*",
     "@figma/plugin-typings": "*",
     "@rspack/cli": "1.0.0-beta.4",
@@ -34,7 +37,9 @@
     "cross-env": "^7.0.3",
     "css-loader": "^7.1.2",
     "esbuild": "^0.23.1",
-    "eslint": "^8.54.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.36.1",
+    "globals": "^15.9.0",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.41",
     "postcss-loader": "^8.1.1",
@@ -42,28 +47,10 @@
     "style-loader": "^4.0.0",
     "tailwindcss": "^3.4.10",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.2"
+    "typescript": "^5.3.2",
+    "typescript-eslint": "^8.5.0"
   },
-  "eslintConfig": {
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:@figma/figma-plugins/recommended"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "project": "./tsconfig.json"
-    },
-    "root": true,
-    "rules": {
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        {
-          "argsIgnorePattern": "^_",
-          "varsIgnorePattern": "^_",
-          "caughtErrorsIgnorePattern": "^_"
-        }
-      ]
-    }
+  "engines": {
+    "node": ">=20"
   }
 }

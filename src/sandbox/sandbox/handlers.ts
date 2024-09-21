@@ -1,3 +1,5 @@
+import { codeHandlers } from '../code/handlers';
+
 function createRectangles(count: number) {
   const nodes: SceneNode[] = [];
   for (let i = 0; i < count; i++) {
@@ -12,9 +14,10 @@ function createRectangles(count: number) {
 }
 
 const handlers = {
+  ...codeHandlers,
   createRectangles,
 };
 
 export default handlers;
 
-export type Handlers = typeof handlers;
+export type SandboxHandlers = typeof handlers;

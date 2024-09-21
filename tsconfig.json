@@ -7,13 +7,17 @@
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "isolatedModules": true,
     "resolveJsonModule": true,
-    "moduleResolution": "bundler",
+    "moduleResolution": "Bundler",
     "useDefineForClassFields": true,
     "allowImportingTsExtensions": true,
     "typeRoots": ["./node_modules/@types", "./node_modules/@figma"],
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "allowJs": true,
+    "paths": {
+      "@rpc": ["./src/rpc"],
+      "@sandbox/*": ["./src/sandbox/*"]
+    }
   },
   "include": ["src"],
   "ts-node": {
