@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["DOM", "ES2020"],
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "Bundler",
+    "useDefineForClassFields": true,
+    "allowImportingTsExtensions": true,
+    "typeRoots": ["./node_modules/@types", "./node_modules/@figma"],
+    "esModuleInterop": true,
+    "allowJs": true,
+    "paths": {
+      "@rpc": ["./src/rpc"],
+      "@sandbox/*": ["./src/sandbox/*"]
+    }
+  },
+  "include": ["src"],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
+}

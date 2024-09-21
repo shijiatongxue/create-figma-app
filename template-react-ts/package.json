@@ -1,0 +1,53 @@
+{
+  "name": "figma-plugin-template",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "npm-run-all -p dev:code dev:sandbox dev:web",
+    "dev:web": "cross-env NODE_ENV=development rspack serve",
+    "dev:code": "esbuild ./src/sandbox/code/index.ts --bundle --outfile=dist/code.js --target=chrome58 --watch",
+    "dev:sandbox": "esbuild ./src/sandbox/sandbox/index.ts --bundle --outfile=src/react/rpc/sandbox.js --target=chrome58 --watch",
+    "build": "npm-run-all -p build:code build:sandbox build:web",
+    "build:web": "cross-env NODE_ENV=production rspack build",
+    "build:code": "esbuild ./src/sandbox/code/index.ts --bundle --outfile=dist/code.js --target=chrome58",
+    "build:sandbox": "esbuild ./src/sandbox/sandbox/index.ts --bundle --outfile=src/react/rpc/sandbox.js --target=chrome58",
+    "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules .",
+    "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix ."
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.10.0",
+    "@figma/eslint-plugin-figma-plugins": "*",
+    "@figma/plugin-typings": "*",
+    "@rspack/cli": "1.0.0-beta.4",
+    "@rspack/core": "1.0.0-beta.4",
+    "@rspack/plugin-react-refresh": "1.0.0-beta.4",
+    "@types/react": "^18.2.48",
+    "@types/react-dev-utils": "^9.0.15",
+    "@types/react-dom": "^18.2.18",
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
+    "autoprefixer": "^10.4.20",
+    "cross-env": "^7.0.3",
+    "css-loader": "^7.1.2",
+    "esbuild": "^0.23.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.36.1",
+    "globals": "^15.9.0",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.41",
+    "postcss-loader": "^8.1.1",
+    "react-refresh": "^0.14.0",
+    "style-loader": "^4.0.0",
+    "tailwindcss": "^3.4.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.2",
+    "typescript-eslint": "^8.5.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
