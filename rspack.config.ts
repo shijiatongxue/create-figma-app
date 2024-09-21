@@ -6,10 +6,10 @@ import path from 'path';
 const isDev = process.env.NODE_ENV === 'development';
 // 需要换成自己的 CDN 地址
 const CDN_ADDRESS =
-  'https://pluin-1307850796.cos.ap-nanjing.myqcloud.com/template';
+  'https://pluin-1307850796.cos.ap-nanjing.myqcloud.com/template/';
 const templatePath = isDev
   ? `http://localhost:3000/index.html`
-  : `${CDN_ADDRESS}/index.html`;
+  : path.join(CDN_ADDRESS, 'index.html');
 
 export default defineConfig({
   context: __dirname,
