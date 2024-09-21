@@ -12,7 +12,12 @@
     "useDefineForClassFields": true,
     "allowImportingTsExtensions": true,
     "typeRoots": ["./node_modules/@types", "./node_modules/@figma"],
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "allowJs": true,
+    "paths": {
+      "@rpc": ["./src/rpc"],
+      "@sandbox/*": ["./src/sandbox/*"]
+    }
   },
   "include": ["src"],
   "ts-node": {

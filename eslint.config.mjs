@@ -9,4 +9,9 @@ export default [
   pluginJs.configs.recommended,
   ...tseslint.configs.strict,
   pluginReact.configs.flat['jsx-runtime'],
+  {
+    rules: {
+      '@typescript-eslint/ban-ts-comment': false,
+    },
+  },
 ];

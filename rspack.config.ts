@@ -1,9 +1,15 @@
 import { defineConfig } from '@rspack/cli';
 import { rspack } from '@rspack/core';
-import path from 'path';
 import RefreshPlugin from '@rspack/plugin-react-refresh';
+import path from 'path';
 
 const isDev = process.env.NODE_ENV === 'development';
+// 需要换成自己的 CDN 地址
+const CDN_ADDRESS =
+  'https://pluin-1307850796.cos.ap-nanjing.myqcloud.com/template';
+const templatePath = isDev
+  ? `http://localhost:3000/index.html`
+  : `${CDN_ADDRESS}/index.html`;
 
 export default defineConfig({
   context: __dirname,
@@ -13,12 +19,17 @@ export default defineConfig({
   output: {
     clean: true,
     path: path.resolve(__dirname, 'dist/web'),
+    publicPath: isDev ? '/' : CDN_ADDRESS,
     filename: '[name].[contenthash].js',
     cssFilename: '[name].[contenthash].css',
     hashDigestLength: 8,
+    assetModuleFilename: '[name].[contenthash].js',
   },
   resolve: {
     extensions: ['...', '.ts', '.tsx', '.jsx'],
+  },
+  optimization: {
+    minimize: !isDev,
   },
   module: {
     rules: [
@@ -44,6 +55,10 @@ export default defineConfig({
         type: 'css',
       },
       {
+        test: /sandbox\.js/,
+        type: 'asset/resource',
+      },
+      {
         test: /\.(jsx?|tsx?)$/,
         use: [
           {
@@ -63,7 +78,12 @@ export default defineConfig({
                 },
               },
               env: {
-                targets: ['chrome >= 87', 'edge >= 88', 'firefox >= 78', 'safari >= 14'],
+                targets: [
+                  'chrome >= 87',
+                  'edge >= 88',
+                  'firefox >= 78',
+                  'safari >= 14',
+                ],
               },
             },
           },
@@ -78,6 +98,9 @@ export default defineConfig({
     devMiddleware: {
       writeToDisk: true,
     },
+    headers: {
+      'access-control-allow-origin': '*',
+    },
   },
   plugins: [
     new rspack.DefinePlugin({
@@ -87,19 +110,35 @@ export default defineConfig({
     new rspack.HtmlRspackPlugin({
       template: './src/react/index.html',
     }),
+    new rspack.HtmlRspackPlugin({
+      templateContent: `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <script>
+      window.location.href = '${templatePath}';
+    </script>
+  </body>
+</html>`,
+      chunks: [],
+      filename: path.resolve(__dirname, './dist/ui.html'),
+    }),
     new rspack.CopyRspackPlugin({
       patterns: [
         {
           from: './manifest.json',
           to: path.resolve(__dirname, 'dist/manifest.json'),
         },
-        {
-          from: isDev ? './ui.dev.html' : './ui.prod.html',
-          to: path.resolve(__dirname, 'dist/ui.html'),
-        },
       ],
     }),
-    isDev ? new RefreshPlugin() : null,
+    isDev
+      ? new RefreshPlugin({
+          // sandbox 不需要注入 react-refresh
+          exclude: /sandbox\.js/,
+        })
+      : null,
   ].filter(Boolean),
   experiments: {
     css: true,
