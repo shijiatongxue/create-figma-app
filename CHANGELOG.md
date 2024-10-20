@@ -1,5 +1,11 @@
 # create-figma-app
 
+## 0.0.3
+
+### Patch Changes
+
+- fix: fixed rspack dev server bug, related to https://github.com/web-infra-dev/rspack/pull/7784
+
 ## 0.0.2
 
 ### Patch Changes

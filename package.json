@@ -1,6 +1,6 @@
 {
   "name": "create-figma-app",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "description": "create plugin app for figma",
   "license": "MIT",
@@ -27,7 +27,8 @@
     "index.js",
     "template-react-ts",
     "dist",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "LICENSE"
   ],
   "engines": {
     "node": ">=20"
