@@ -9,3 +9,5 @@ code.js
 .DS_Store
 
 pnpm-lock.yaml
+
+*.tgz
