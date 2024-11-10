@@ -16,7 +16,10 @@ pnpm create figma-app@latest my-figma-app
 
 ## Current supported template
 
-- `react-ts`：react、tailwind、typescript、rspack
+
+### react-ts
+
+- using react、tailwind、typescript、rspack
 
 It has the following advantages:
 
