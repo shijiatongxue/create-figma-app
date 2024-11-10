@@ -1,29 +1,49 @@
 # figma-plugin-template
 
-A figma template using React, Typescript, JSON RPC.
+A figma template using React, Tailwind, Typescript, JSON RPC.
 
-<img width="1728" alt="image" src="https://github.com/user-attachments/assets/07858825-23be-46e7-b723-b0da8cdf0cc9">
+- Simplify postmessage communication between ui and sandbox
+- Sandbox is published together with ui, no need to publish sandbox in Figma
+- Good TypeScript type definition, ui and sandbox know each other's function interface
+- Extremely small sandbox code size, only contains sandbox code
 
-## Install
-
-```bash
-pnpm install
-```
+![](https://figma-plugin-template-1307850796.cos.ap-beijing.myqcloud.com/plugin-screenshot.png)
 
 ## Development
 
 ```bash
+pnpm install
 npm run dev
 ```
 
-- we use [rspack](https://rspack.dev/) to bundle web project
-- we use [esbuild](https://esbuild.github.io/) to bundle sandbox code
+### Code Structure
+
+```
+├── react               // react project
+│   ├── App.tsx
+│   ├── index.css
+│   ├── index.html
+│   ├── index.tsx
+│   ├── rpc
+|   |  ├── index.ts    // create postmessage handler in ui
+|   |  ├── handlers.ts // ui handlers for sandbox event
+|   |  └── sandbox.js  // [auto generated, no need to modify this file] ui will get the sandbox code (a url, same origin with ui), and then postmessage it to the sandbox and execute it
+│   └── utils
+└── sandbox
+|    ├── code           // sandbox init code. When the plugin is first published in Figma, this file (`code.js` in dist) needs to be published
+|    └── sandbox        // sandbox core code, will be bundled to `react/rpc/sandbox.js`
+|      ├── index.ts     // create postmessage handler in sandbox
+|      └── handlers.ts  // sandbox handlers for ui event
+```
+
 
 ## Build
 
 ```bash
 npm run build
 ```
+
+![](https://figma-plugin-template-1307850796.cos.ap-beijing.myqcloud.com/build.png)
 
 Here are the bundles:
 
@@ -42,74 +62,33 @@ Here are the bundles:
 
 Don't forget to replace the html url with your CDN address.
 
-<img width="1728" alt="image" src="https://github.com/user-attachments/assets/99f722e8-451d-4e24-9828-c9abcedf6cbb">
+![](https://figma-plugin-template-1307850796.cos.ap-beijing.myqcloud.com/replace-your-cdn.png)
 
-## One more thing
+Your entrance page will be here, check it.
 
-We use JSON rpc with typings, so that we can know each interface.
+![](https://figma-plugin-template-1307850796.cos.ap-beijing.myqcloud.com/check-cdn.png)
 
-- before
 
-```typescript
-// plugin ui postmessage to sandbox code
-parent.postMessage({ pluginMessage: { type: 'create-rectangles', count } }, '*')
-```
+> If you need to customize the build process, [rspack doc](https://rspack.dev/) and [esbuild doc](https://esbuild.github.io/) will be helpful.
 
-```typescript
-// sandbox code listen and do sothing
-figma.ui.onmessage = (msg: { type: string, count: number }) => {
-  // One way of distinguishing between different types of messages sent from
-  // your HTML page is to use an object with a "type" property like this.
-  if (msg.type === 'create-rectangles') {
-    const nodes: SceneNode[] = [];
-    for (let i = 0; i < msg.count; i++) {
-      const rect = figma.createRectangle();
-      rect.x = i * 150;
-      rect.fills = [{ type: 'SOLID', color: { r: 1, g: 0.5, b: 0 } }] as any;
-      figma.currentPage.appendChild(rect);
-      nodes.push(rect);
-    }
-    figma.currentPage.selection = nodes;
-    figma.viewport.scrollAndZoomIntoView(nodes);
-  }
+## Publish
 
-  // Make sure to close the plugin when you're done. Otherwise the plugin will
-  // keep running, which shows the cancel button at the bottom of the screen.
-  figma.closePlugin();
-};
-```
+- First publish: All you need is drop `dist/web` to your cdn, and check the effect in the development environment.
 
-- after
+- Subsequent publish: like first time, or you can automate this process through CI, depending on the code management tool or pipeline you use (Github, Gitlab, Jenkins, and so on)
 
-```typescript
-// plugin ui call codeApi by JSON rpc
-codeApi.createRectangles(count);
-```
+## Performance
 
-```typescript
-// sandbox code declare handler
-function createRectangles(count: number) {
-  const nodes: SceneNode[] = [];
-  for (let i = 0; i < count; i++) {
-    const rect = figma.createRectangle();
-    rect.x = i * 150;
-    rect.fills = [{ type: 'SOLID', color: { r: 1, g: 0.5, b: 0 } }] as any;
-    figma.currentPage.appendChild(rect);
-    nodes.push(rect);
-  }
-  figma.currentPage.selection = nodes;
-  figma.viewport.scrollAndZoomIntoView(nodes);
-}
-// other handlers
+You can choose any one of the following, or use a combination of
 
-const handlers = {
-  createRectangles,
-};
+- [Rsdoctor](https://rspack.dev/zh/guide/optimization/use-rsdoctor): `npm run build:rsdoctor`
 
-export default handlers;
-```
+![](https://figma-plugin-template-1307850796.cos.ap-beijing.myqcloud.com/rsdoctor.png)
 
-And we don't have to bundle plugin api's handlers to code api or vice versa using [Proxy](./src/rpc/proxy.ts)！
+- [webpack-bundle-analyzer](https://rspack.dev/zh/guide/optimization/analysis#webpack-bundle-analyzer): `npm run build:analyze`
+
+![](https://figma-plugin-template-1307850796.cos.ap-beijing.myqcloud.com/webpack-bundle-analyzer.png)
+
 
 ## Thanks
 

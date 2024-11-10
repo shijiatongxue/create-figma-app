@@ -1,4 +1,5 @@
-import { createRpcApi } from '@rpc';
+import { createRpcApi } from 'jsonrpc-over-postmessage';
+
 import { codeHandlers } from './handlers';
 
 /**

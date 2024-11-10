@@ -11,10 +11,13 @@
     "build:web": "cross-env NODE_ENV=production rspack build",
     "build:code": "esbuild ./src/sandbox/code/index.ts --bundle --outfile=dist/code.js --target=chrome58",
     "build:sandbox": "esbuild ./src/sandbox/sandbox/index.ts --bundle --outfile=src/react/rpc/sandbox.js --target=chrome58",
+    "build:rsdoctor": "cross-env NODE_ENV=production RSDOCTOR=true rspack build",
+    "build:analyze": "cross-env NODE_ENV=production rspack build --analyze",
     "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules .",
     "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix ."
   },
   "dependencies": {
+    "jsonrpc-over-postmessage": "^0.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -22,6 +25,7 @@
     "@eslint/js": "^9.10.0",
     "@figma/eslint-plugin-figma-plugins": "*",
     "@figma/plugin-typings": "*",
+    "@rsdoctor/rspack-plugin": "^0.4.8",
     "@rspack/cli": "1.0.2",
     "@rspack/core": "1.0.2",
     "@rspack/plugin-react-refresh": "1.0.0-beta.4",

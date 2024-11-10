@@ -19,14 +19,11 @@
     return a;
   };
   var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
-  // src/rpc/errors.ts
+  // node_modules/.pnpm/jsonrpc-over-postmessage@0.0.2/node_modules/jsonrpc-over-postmessage/dist/errors.js
   var InvalidRequest = class extends Error {
     constructor(data) {
       super("Invalid Request");
-      __publicField(this, "data");
-      __publicField(this, "statusCode");
       this.data = data;
       this.statusCode = -32600;
     }
@@ -34,14 +31,12 @@
   var MethodNotFound = class extends Error {
     constructor(data) {
       super("Method not found");
-      __publicField(this, "data");
-      __publicField(this, "statusCode");
       this.data = data;
       this.statusCode = -32601;
     }
   };
 
-  // src/rpc/rpc.ts
+  // node_modules/.pnpm/jsonrpc-over-postmessage@0.0.2/node_modules/jsonrpc-over-postmessage/dist/rpc.js
   var rpcIndex = 0;
   var pending = {};
   function sendRaw(message) {
@@ -50,7 +45,7 @@
     if (typeof postmessage === "function") {
       postmessage(raw);
     } else {
-      target == null ? void 0 : target.postMessage(raw, targetOrigin);
+      target === null || target === void 0 ? void 0 : target.postMessage(raw, targetOrigin);
     }
   }
   function sendJson(json) {
@@ -138,10 +133,7 @@
       if (typeof result !== "undefined" || error || typeof method === "undefined") {
         const callback = pending[id];
         if (!callback) {
-          sendError(
-            id,
-            new InvalidRequest("Missing callback for " + json.id)
-          );
+          sendError(id, new InvalidRequest("Missing callback for " + json.id));
           return;
         }
         if (callback.timeout) {
@@ -170,7 +162,7 @@
     onRequest(json.method, json.params);
   }
 
-  // src/rpc/config.ts
+  // node_modules/.pnpm/jsonrpc-over-postmessage@0.0.2/node_modules/jsonrpc-over-postmessage/dist/config.js
   var config = {
     target: null,
     targetOrigin: "*",
@@ -185,7 +177,7 @@
     }
   }
 
-  // src/rpc/proxy.ts
+  // node_modules/.pnpm/jsonrpc-over-postmessage@0.0.2/node_modules/jsonrpc-over-postmessage/dist/proxy.js
   function createApiProxy() {
     const target = {
       sendRequest
@@ -202,7 +194,7 @@
     return proxy;
   }
 
-  // src/rpc/index.ts
+  // node_modules/.pnpm/jsonrpc-over-postmessage@0.0.2/node_modules/jsonrpc-over-postmessage/dist/index.js
   var createRpcApi = (options) => {
     initConfig(options);
     return createApiProxy();
@@ -259,17 +251,24 @@
   var handlers_default = handlers;
 
   // src/sandbox/sandbox/index.ts
-  createRpcApi({
+  var uiApi = createRpcApi({
     postmessage: (message) => figma.ui.postMessage(message, { origin: "*" }),
     onmessage: (handler) => {
       figma.ui.onmessage = (message) => {
-        console.log("sandbox message", message);
+        console.log("code message", message);
         handler(message);
       };
     },
     rpcMethods: handlers_default
   });
   figma.on("selectionchange", () => {
-    console.log("selectionchange");
+    const _selection = figma.currentPage.selection;
+    const selection = _selection.map((item) => ({
+      id: item.id,
+      name: item.name,
+      type: item.type
+    }));
+    console.log("selectionchange", selection);
+    uiApi.handleSelectionChange(selection);
   });
 })();

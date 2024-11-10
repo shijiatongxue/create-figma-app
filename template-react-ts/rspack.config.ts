@@ -1,3 +1,4 @@
+import { RsdoctorRspackPlugin } from '@rsdoctor/rspack-plugin';
 import { defineConfig } from '@rspack/cli';
 import { rspack } from '@rspack/core';
 import RefreshPlugin from '@rspack/plugin-react-refresh';
@@ -5,11 +6,10 @@ import path from 'path';
 
 const isDev = process.env.NODE_ENV === 'development';
 // 需要换成自己的 CDN 地址
-const CDN_ADDRESS =
-  'https://pluin-1307850796.cos.ap-nanjing.myqcloud.com/template/';
+const CDN_ADDRESS = 'https://YOUR_CDN_ADDRESS/';
 const templatePath = isDev
   ? `http://localhost:3000/index.html`
-  : path.join(CDN_ADDRESS, 'index.html');
+  : `${CDN_ADDRESS}index.html`;
 
 export default defineConfig({
   context: __dirname,
@@ -19,7 +19,7 @@ export default defineConfig({
   output: {
     clean: true,
     path: path.resolve(__dirname, 'dist/web'),
-    publicPath: isDev ? '/' : CDN_ADDRESS,
+    publicPath: isDev ? 'http://localhost:3000/' : CDN_ADDRESS,
     filename: '[name].[contenthash].js',
     cssFilename: '[name].[contenthash].css',
     hashDigestLength: 8,
@@ -107,6 +107,12 @@ export default defineConfig({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     }),
     new rspack.ProgressPlugin({}),
+    process.env.RSDOCTOR &&
+      new RsdoctorRspackPlugin({
+        supports: {
+          generateTileGraph: true,
+        },
+      }),
     new rspack.HtmlRspackPlugin({
       template: './src/react/index.html',
     }),

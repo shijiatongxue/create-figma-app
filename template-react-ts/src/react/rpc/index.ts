@@ -1,6 +1,8 @@
+import { createRpcApi } from 'jsonrpc-over-postmessage';
+
 import { SandboxHandlers } from '@sandbox/sandbox';
 import manifest from '../../../manifest.json';
-import { createRpcApi } from '../../rpc';
+import { getSandboxContent } from '../utils';
 // @ts-ignore ignore
 import sandbox from './sandbox.js';
 
@@ -28,9 +30,9 @@ export const sandboxApi = createRpcApi<SandboxHandlers>({
 });
 
 // 注册 sandbox.js
-sandboxApi
-  .executeScriptURL(sandbox)
-  .then(({ message }) => console.log(message))
-  .catch(({ message }) => console.error(message));
-
-export {};
+export const registerSandboxApi = async () => {
+  const sandboxContent = await getSandboxContent(sandbox);
+  if (sandboxContent) {
+    return sandboxApi.executeScript(sandboxContent);
+  }
+};
