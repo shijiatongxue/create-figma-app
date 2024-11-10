@@ -1,5 +1,11 @@
 # create-figma-app
 
+## 0.0.4
+
+### Patch Changes
+
+- refactor: refactor postmessage bridge and fix some bugs
+
 ## 0.0.3
 
 ### Patch Changes
