@@ -34,7 +34,7 @@ See [More about this template](./template-react-ts/README.md)
 
 ## Plugins using this template
 
-- [Quick Replace Font](https://www.figma.com/community/plugin/1241949869279607046/quick-replace-font): Replace fonts with one click. used by 3.5k users.
+- [Quick Replace Font](https://www.figma.com/community/plugin/1241949869279607046/quick-replace-font): Replace fonts with one click. used by 4k+ users.
 
 ![](https://site-1307850796.cos.ap-beijing.myqcloud.com/quick-replace-font.png)
 
